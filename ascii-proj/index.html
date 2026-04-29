@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASCII.STUDIO</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dark">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="logo">ASCII<span class="logo-dot">.</span>STUDIO</h1>
+      <p class="tagline">// convert reality into characters //</p>
+    </div>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span class="toggle-icon" id="themeIcon">☀</span>
+      <span class="toggle-label" id="themeLabel">DAY MODE</span>
+    </button>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="app-shell">
+
+    <!-- LEFT: inputs -->
+    <section class="panel-inputs">
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tabUpload" onclick="switchTab('upload')">[ UPLOAD ]</button>
+        <button class="tab"        id="tabCamera" onclick="switchTab('camera')">[ CAMERA ]</button>
+      </div>
+
+      <!-- UPLOAD TAB -->
+      <div class="tab-panel active" id="uploadPanel">
+        <div class="section-label">① SUBJECT IMAGE — becomes the ascii art</div>
+        <div class="drop-zone" id="subjectDrop" onclick="document.getElementById('subjectFile').click()">
+          <div class="drop-icon">▣</div>
+          <span>DROP OR CLICK TO UPLOAD SUBJECT</span>
+          <span class="drop-hint">jpg · png · webp · gif</span>
+        </div>
+        <input type="file" id="subjectFile" accept="image/*" hidden />
+        <img id="subjectPreview" class="thumb hidden" alt="subject" />
+
+        <div class="section-label top-gap">② BACKGROUND IMAGE — optional canvas behind the art</div>
+        <div class="drop-zone" id="bgDrop" onclick="document.getElementById('bgFile').click()">
+          <div class="drop-icon">⊞</div>
+          <span>DROP OR CLICK TO UPLOAD BACKGROUND</span>
+          <span class="drop-hint">ascii characters are drawn on top of this</span>
+        </div>
+        <input type="file" id="bgFile" accept="image/*" hidden />
+        <img id="bgPreview" class="thumb hidden" alt="background" />
+        <button class="btn-small danger hidden" id="clearBgBtn" onclick="clearBg('upload')">✕ REMOVE BACKGROUND</button>
+      </div>
+
+      <!-- CAMERA TAB -->
+      <div class="tab-panel hidden" id="cameraPanel">
+        <p class="cam-status" id="camStatus">[ CAMERA OFFLINE ]</p>
+        <button class="btn" id="camToggleBtn" onclick="toggleCamera()">START CAMERA</button>
+        <div class="cam-wrap hidden" id="camWrap">
+          <video id="videoEl" autoplay playsinline muted></video>
+          <div class="scan-overlay"></div>
+        </div>
+
+        <div class="section-label top-gap">BACKGROUND IMAGE — optional</div>
+        <div class="drop-zone" id="camBgDrop" onclick="document.getElementById('camBgFile').click()">
+          <div class="drop-icon">⊞</div>
+          <span>DROP OR CLICK TO UPLOAD BACKGROUND</span>
+        </div>
+        <input type="file" id="camBgFile" accept="image/*" hidden />
+        <img id="camBgPreview" class="thumb hidden" alt="cam background" />
+        <button class="btn-small danger hidden" id="clearCamBgBtn" onclick="clearBg('camera')">✕ REMOVE BACKGROUND</button>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: controls + output -->
+    <section class="panel-output">
+
+      <div class="controls-bar">
+        <div class="ctrl-group">
+          <label class="ctrl-label">WIDTH</label>
+          <input type="range" id="widthSlider" min="40" max="220" value="100"
+            oninput="syncVal('widthSlider','widthVal'); renderAscii()" />
+          <span class="ctrl-val" id="widthVal">100</span>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">CONTRAST</label>
+          <input type="range" id="contrastSlider" min="50" max="250" value="120"
+            oninput="syncVal('contrastSlider','contrastVal'); renderAscii()" />
+          <span class="ctrl-val" id="contrastVal">120</span>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">FONT PX</label>
+          <input type="range" id="fontSizeSlider" min="4" max="16" value="7"
+            oninput="syncVal('fontSizeSlider','fontSizeVal','px'); applyFontSize()" />
+          <span class="ctrl-val" id="fontSizeVal">7px</span>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">CHARSET</label>
+          <select id="charsetSel" onchange="renderAscii()">
+            <option value="0">STANDARD</option>
+            <option value="1">DENSE</option>
+            <option value="2">MINIMAL</option>
+            <option value="3">BLOCKS</option>
+            <option value="4">BINARY</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">INVERT</label>
+          <input type="checkbox" id="invertChk" onchange="renderAscii()" />
+        </div>
+        <div class="ctrl-group">
+          <label class="ctrl-label">COLOR</label>
+          <input type="checkbox" id="colorChk" onchange="renderAscii()" />
+        </div>
+      </div>
+
+      <!-- Output area -->
+      <div class="output-wrap" id="outputWrap">
+        <div class="out-toolbar">
+          <span class="out-info" id="outInfo">// awaiting input //</span>
+          <div class="out-actions">
+            <button class="out-btn" onclick="copyAscii()">[ COPY ]</button>
+            <button class="out-btn" onclick="saveTxt()">[ .TXT ]</button>
+            <button class="out-btn" onclick="savePng()">[ .PNG ]</button>
+          </div>
+        </div>
+        <!-- Plain text mode (no bg) -->
+        <pre id="asciiOut">// load a subject image or start camera to begin //</pre>
+        <!-- Composited canvas (when bg image is set) -->
+        <canvas id="compositCanvas" class="hidden"></canvas>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Hidden processing canvas (never shown) -->
+  <canvas id="processingCanvas" hidden></canvas>
+
+  <script src="ascii.js"></script>
+  <script src="composite.js"></script>
+  <script src="upload.js"></script>
+  <script src="camera.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+/* ============================================================
+   ASCII STUDIO — style.css
+   Dark mode = default. Light (day) mode via body.light class.
+   ============================================================ */
+
+/* ── Fonts ─────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+/* ── CSS Variables ──────────────────────────────────────────── */
+:root {
+  --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+  --font-display: 'Orbitron', monospace;
+  --radius: 2px;
+  --transition: 0.2s ease;
+}
+
+/* DARK theme tokens */
+body.dark {
+  --bg-page:        #000000;
+  --bg-panel:       #050505;
+  --bg-input:       #0a0a0a;
+  --bg-output:      #000000;
+  --border:         #1a3d1a;
+  --border-bright:  #00ff41;
+  --text-primary:   #00ff41;
+  --text-muted:     #1a6630;
+  --text-hint:      #0d4420;
+  --accent:         #00ff41;
+  --accent-dim:     #005c18;
+  --danger:         #ff4444;
+  --tab-active-bg:  #00ff41;
+  --tab-active-fg:  #000000;
+  --drop-hover-bg:  rgba(0,255,65,0.04);
+  --thumb-border:   #005c18;
+  --scan-color:     rgba(0,255,65,0.15);
+  --out-bg:         #000000;
+}
+
+/* LIGHT (day) theme tokens */
+body.light {
+  --bg-page:        #f4f1eb;
+  --bg-panel:       #ffffff;
+  --bg-input:       #f9f7f2;
+  --bg-output:      #ffffff;
+  --border:         #c8c4b8;
+  --border-bright:  #1a1a1a;
+  --text-primary:   #1a1a1a;
+  --text-muted:     #555048;
+  --text-hint:      #888070;
+  --accent:         #1a1a1a;
+  --accent-dim:     #888070;
+  --danger:         #cc2222;
+  --tab-active-bg:  #1a1a1a;
+  --tab-active-fg:  #f4f1eb;
+  --drop-hover-bg:  rgba(26,26,26,0.04);
+  --thumb-border:   #c8c4b8;
+  --scan-color:     rgba(26,26,26,0.1);
+  --out-bg:         #ffffff;
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.5;
+  transition: background var(--transition), color var(--transition);
+  min-height: 100vh;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.header-inner { display: flex; flex-direction: column; gap: 2px; }
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 4px;
+}
+
+.logo-dot { color: var(--accent); }
+
+.tagline {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--border-bright);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  color: var(--tab-active-fg);
+}
+
+.toggle-icon { font-size: 14px; }
+
+/* ── App Shell: 2-column layout ────────────────────────────── */
+.app-shell {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 0;
+  min-height: calc(100vh - 65px);
+}
+
+/* ── Left panel: inputs ─────────────────────────────────────── */
+.panel-inputs {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-bright);
+}
+
+.tab {
+  flex: 1;
+  padding: 9px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.tab.active {
+  background: var(--tab-active-bg);
+  color: var(--tab-active-fg);
+}
+
+.tab:hover:not(.active) { color: var(--text-primary); }
+
+/* Tab panels */
+.tab-panel { display: flex; flex-direction: column; gap: 8px; }
+.tab-panel.hidden { display: none; }
+
+/* Section labels */
+.section-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.top-gap { margin-top: 24px; }
+
+/* Drop zones */
+.drop-zone {
+  border: 1px dashed var(--border);
+  padding: 20px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--drop-hover-bg);
+}
+
+.drop-icon {
+  font-size: 24px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.drop-zone span {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.drop-hint {
+  font-size: 10px !important;
+  color: var(--text-hint) !important;
+}
+
+/* Thumb previews */
+.thumb {
+  width: 100%;
+  max-height: 100px;
+  object-fit: cover;
+  border: 1px solid var(--thumb-border);
+  margin-top: 4px;
+  filter: grayscale(0.3);
+}
+
+.thumb.hidden { display: none; }
+
+/* Buttons */
+.btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  align-self: flex-start;
+}
+
+.btn:hover { background: var(--accent); color: var(--tab-active-fg); }
+
+.btn-small {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all var(--transition);
+}
+
+.btn-small.danger { border-color: var(--danger); color: var(--danger); }
+.btn-small.danger:hover { background: var(--danger); color: #fff; }
+.btn-small.hidden { display: none; }
+
+/* Camera */
+.cam-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.cam-status .live-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--danger);
+  margin-right: 6px;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+.cam-wrap {
+  position: relative;
+  margin-top: 12px;
+}
+
+.cam-wrap.hidden { display: none; }
+
+#videoEl {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--border);
+  filter: grayscale(0.6) contrast(1.1);
+}
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid transparent;
+  animation: scanpulse 3s linear infinite;
+}
+
+@keyframes scanpulse {
+  0%,100% { border-color: transparent; }
+  50% { border-color: var(--scan-color); }
+}
+
+/* ── Right panel: output ─────────────────────────────────────── */
+.panel-output {
+  background: var(--bg-output);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Controls bar */
+.controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ctrl-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+
+.ctrl-val {
+  font-size: 11px;
+  color: var(--text-primary);
+  min-width: 32px;
+  text-align: right;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 80px;
+  height: 2px;
+  background: var(--border);
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px; height: 11px;
+  background: var(--accent);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+select {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+select:focus { border-color: var(--accent); }
+
+input[type="checkbox"] {
+  width: 14px; height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Output area */
+.output-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.out-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+  flex-shrink: 0;
+}
+
+.out-info {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.out-actions { display: flex; gap: 6px; }
+
+.out-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: color var(--transition);
+  border: 1px solid var(--border);
+}
+
+.out-btn:hover { color: var(--text-primary); border-color: var(--accent); }
+
+#asciiOut {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  line-height: 1;
+  color: var(--text-primary);
+  background: var(--out-bg);
+  white-space: pre;
+  overflow: auto;
+  padding: 12px;
+  transition: background var(--transition), color var(--transition);
+}
+
+#asciiOut.hidden { display: none; }
+
+#compositCanvas {
+  flex: 1;
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  background: var(--out-bg);
+}
+
+#compositCanvas.hidden { display: none; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+  .panel-inputs {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .controls-bar { gap: 10px 14px; }
+  input[type="range"] { width: 60px; }
+}
